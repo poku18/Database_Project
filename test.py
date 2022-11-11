@@ -91,7 +91,7 @@ def result_process(query):
     print()
     for table in query:
         for record in table.records:
-            print('{0},{1},{2}'.format(record.get_time().date(),record.get_field(), record.get_value()))
+            print('{0},{1},{2}'.format(record.get_time().date(),record.get_field(), round(record.get_value(),3)))
     print()
 
 
