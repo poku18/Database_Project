@@ -9,11 +9,14 @@ from reactivex import operators as ops
 token = os.environ.get("INFLUXDB_TOKEN")
 org = "pb.bhandari18@gmail.com"
 url = "https://us-east-1-1.aws.cloud2.influxdata.com"
-client=InfluxDBClient(url=url, token=token, org=org, debug=False)
-
-#client = influxdb_client.InfluxDBClient(url=url, token=token, org=org, debug=True)
 bucket="cosc516"
 
+def connect():
+    global client
+    client=InfluxDBClient(url=url, token=token, org=org, debug=False)
+    health = client.ping()
+    print(health)
+    return client
 
 def parse_row(row: OrderedDict):
     """Parse row of CSV file into Point with structure:
@@ -83,6 +86,14 @@ def query3():
     result = client.query_api().query(query=query)
     return result
 
+def query4():
+    query='from(bucket:"cosc516")' \
+                ' |> range(start: 0, stop: now())' \
+                ' |> filter(fn: (r) => r._measurement == "financial-analysis")' \
+                ' |> count()'
+    result = client.query_api().query(query=query)
+    return result
+
 def result_process(query):
     """
     Processing results
@@ -91,11 +102,12 @@ def result_process(query):
     print()
     for table in query:
         for record in table.records:
-            print('{0},{1},{2}'.format(record.get_time().date(),record.get_field(), record.get_value()))
+            print('{0},{1},{2}'.format(record.get_time().date(),record.get_field(), round(record.get_value(),3)))
     print()
 
-
+client=connect()
 drop()
+
 load()
 print("Maximum Values")
 result_process(query1())
@@ -105,3 +117,10 @@ result_process(query2())
 
 print("Mean of low values per month")
 result_process(query3())
+
+print("Count=========")
+true={}
+for table in query4():
+    for record in table.records:
+        true[str(record.get_field())]=str(round(record.get_value(),3))
+print(true)
