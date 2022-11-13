@@ -59,12 +59,21 @@ def load():
         """
         write_api.write(bucket="cosc516", record=data)
 
+def query0():
+    query = 'from(bucket:"cosc516")' \
+                ' |> range(start: 0, stop: now())' \
+                ' |> filter(fn: (r) => r._measurement == "financial-analysis")' \
+                ' |> limit(n: 5)' 
+    result = client.query_api().query(query=query)
+    return result
+
 #Query to give out the maximum high, open, close and low values from the whole data.
 def query1():
     query = 'from(bucket:"cosc516")' \
                 ' |> range(start: 0, stop: now())' \
                 ' |> filter(fn: (r) => r._measurement == "financial-analysis")' \
-                ' |> max()'
+                ' |> max()' \
+                ' |> sort(columns:["_field"],desc:true)'
     result = client.query_api().query(query=query)
     return result
 
@@ -98,29 +107,36 @@ def result_process(query):
     """
     Processing results
     """
+    res_str=[]
     print("=== results ===")
-    print()
+    
     for table in query:
         for record in table.records:
-            print('{0},{1},{2}'.format(record.get_time().date(),record.get_field(), round(record.get_value(),3)))
+            res_str.append('{0},{1},{2}'.format(record.get_time().date(),record.get_field(),round(record.get_value(),3)))
+            print('{0},{1},{2}'.format(record.get_time().date(),record.get_field(),round(record.get_value(),3)))
     print()
+    return res_str
 
-client=connect()
-drop()
+def main():
+    global client
+    client=connect()
+    drop()
 
-load()
-print("Maximum Values")
-result_process(query1())
+    load()
 
-print("VIX High only")
-result_process(query2())
+    print("Limit 5 Values")
+    result_process(query0())
 
-print("Mean of low values per month")
-result_process(query3())
+    print("Maximum Values")
+    result_process(query1())
 
-print("Count=========")
-true={}
-for table in query4():
-    for record in table.records:
-        true[str(record.get_field())]=str(round(record.get_value(),3))
-print(true)
+    print("VIX High only")
+    result_process(query2())
+
+    print("Mean of low values per month")
+    result_process(query3())
+
+if __name__=='__main__':
+    main()
+
+
