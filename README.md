@@ -10,14 +10,14 @@ Choose the free tier.
 
 Choose a provider. We chose AWS for our project.
 
-![alt text](images/image2.png)
+<img src="Images/Image2.png">
 
 Click on "Create Bucket" button.
-![alt text](images/image4.png)
+<img src="Images/Image4.png">
 
 Create a bucket as shown. 
 
-![alt text](images/image3.png)
+<img src="Images/Image3.png">
 
 This concludes the Setup on InfluxDB Cloud UI.
 
