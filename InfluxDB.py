@@ -151,9 +151,9 @@ def result_process(query):
 def main():
     global client
     client=connect()
-    #drop()
+    drop()
 
-    #load()
+    load()
 
     print("Limit 5 Values")
     result_process(query0())
