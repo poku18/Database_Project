@@ -141,6 +141,10 @@ def result_process(query):
     res_str=[]
     print("=== results ===")
     
+    if(query==" "):
+        print("None")
+        return 0
+    
     for table in query:
         for record in table.records:
             res_str.append('{0},{1},{2}'.format(record.get_time().date(),record.get_field(),round(record.get_value(),3)))
@@ -169,12 +173,17 @@ def main():
 
     print("Count of each field")
     result=query4()
-    count={}
-    for table in result:
-            for record in table.records:
-                count[str(record.get_field())]=str(round(record.get_value(),3))
-    print(count)
+    if result!=" ":
+        count={}
+        for table in result:
+                for record in table.records:
+                    count[str(record.get_field())]=str(round(record.get_value(),3))
+        print(count)
+    else:
+        print("None")
+        
 if __name__=='__main__':
     main()
+
 
 
