@@ -53,19 +53,24 @@ def load():
     """
     Create client that writes data in batches with 50_000 items.
     """
+    
     with client.write_api(write_options=WriteOptions(batch_size=50_000, flush_interval=10_000)) as write_api:
         """
         Write data into InfluxDB
         """
-        write_api.write(bucket="cosc516", record=data)
+        write_api.write(bucket="cosc516", org=org, record=data)
 
+# TODo : Query to 
 def query0():
     query = 'from(bucket:"cosc516")' \
                 ' |> range(start: 0, stop: now())' \
-                ' |> filter(fn: (r) => r._measurement == "financial-analysis")' \
-                ' |> limit(n: 5)' 
-    result = client.query_api().query(query=query)
+                ' |> filter(fn: (r) => r._measurement == "financial-analysis")'\
+                ' |> filter(fn: (r) => r._field=="open")' \
+                ' |> sort(columns:["_value"],desc:false)'\
+                ' |> limit(n: 5)'
+    result = client.query_api().query(org=org, query=query)
     return result
+
 
 #Query to give out the maximum high, open, close and low values from the whole data.
 def query1():
@@ -120,9 +125,9 @@ def result_process(query):
 def main():
     global client
     client=connect()
-    drop()
+    #drop()
 
-    load()
+    #load()
 
     print("Limit 5 Values")
     result_process(query0())
@@ -136,6 +141,13 @@ def main():
     print("Mean of low values per month")
     result_process(query3())
 
+    print("Count of each field")
+    result=query4()
+    count={}
+    for table in result:
+            for record in table.records:
+                count[str(record.get_field())]=str(round(record.get_value(),3))
+    print(count)
 if __name__=='__main__':
     main()
 

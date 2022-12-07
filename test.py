@@ -1,4 +1,4 @@
-from InfluxDB import connect,load,drop,query1,query2,query3,result_process
+from InfluxDB import connect,load,drop,query1,query2,query3,result_process,query0,query4
 import unittest
 import influxdb_client, os, time
 from influxdb_client import InfluxDBClient, Point, WritePrecision, WriteOptions
@@ -40,6 +40,16 @@ class TestInfluxDB(unittest.TestCase):
                 count[str(record.get_field())]=str(round(record.get_value(),3))
         self.assertEqual(count,{'low': '3952', 'high': '3952', 'close': '3952', 'open': '3952'})
 
+    def test_query0(self):
+        client=connect()
+        final_string=result_process(query0())
+        expected=['2018-01-04,open,9.01',
+                    '2018-01-05,open,9.1',
+                    '2017-10-06,open,9.23',
+                    '2017-07-26,open,9.25',
+                    '2017-10-03,open,9.3']
+        self.assertCountEqual(final_string,expected)
+
     def test_query1(self):
         "Test to check if query1 is successful and as expected"
         client=connect()
@@ -61,7 +71,7 @@ class TestInfluxDB(unittest.TestCase):
         self.assertCountEqual(final_string,expected)
 
     def test_query3(self):
-        "Test to check if query1 is successful and as expected"
+        "Test to check if query3 is successful and as expected"
         client=connect()
         final_string=result_process(query3())     
         expected=['2006-02-01,low,11.708', 
@@ -77,6 +87,16 @@ class TestInfluxDB(unittest.TestCase):
                     '2006-12-01,low,10.555', 
                     '2006-12-31,low,10.603']   
         self.assertCountEqual(final_string,expected)
+
+    def test_query4(self):
+        client=connect()
+        result=query4()
+        count={}
+        for table in result:
+            for record in table.records:
+                count[str(record.get_field())]=str(round(record.get_value(),3))
+        self.assertEqual(count,{'low': '3952', 'high': '3952', 'close': '3952', 'open': '3952'})
+        
     
 if __name__ == '__main__':
     unittest.main()
