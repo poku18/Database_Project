@@ -11,6 +11,9 @@ org = "pb.bhandari18@gmail.com"
 url = "https://us-east-1-1.aws.cloud2.influxdata.com"
 bucket="cosc516"
 
+"""
+TO-DO: Make a connection to the database
+"""
 def connect():
     global client
     client=InfluxDBClient(url=url, token=token, org=org, debug=False)
@@ -18,6 +21,9 @@ def connect():
     print(health)
     return client
 
+"""
+TO-DO: Parse the file to return Point before loading the data.
+"""
 def parse_row(row: OrderedDict):
     """Parse row of CSV file into Point with structure:
         financial-analysis,type=vix-daily close=18.47,high=19.82,low=18.28,open=19.82 1198195200000000000
@@ -41,10 +47,17 @@ def parse_row(row: OrderedDict):
         .field("close", float(row['VIX Close'])) \
         .time(row['Date'])
 
+"""
+TO-DO: Delete all data from the database
+"""
 def drop():
     delete_api=client.delete_api()
     delete_api.delete("1970-01-01T00:00:00Z", "2022-11-10T22:39:12.107968366Z", '_measurement="financial-analysis"', bucket, org)
 
+"""
+TO-DO: load all the data from the vix-daily.csv into the bucket with measurement name 
+financial-analysis, tag="type" with value of "vix-daily" and fields = "open","high","low" and "close".
+"""
 def load():
     data = rx \
             .from_iterable(DictReader(open('data/vix-daily.csv', 'r'))) \
@@ -60,7 +73,9 @@ def load():
         """
         write_api.write(bucket="cosc516", org=org, record=data)
 
-# TODo : Query to 
+"""
+TO-DO : Query the data of field "open" (VIX-Open), sort by value in ascending and limit by 5
+"""
 def query0():
     query = 'from(bucket:"cosc516")' \
                 ' |> range(start: 0, stop: now())' \
@@ -72,7 +87,9 @@ def query0():
     return result
 
 
-#Query to give out the maximum high, open, close and low values from the whole data.
+"""
+TO-DO : Query the maximum value of each field "high", "open", "close" and "low" from the whole data
+"""
 def query1():
     query = 'from(bucket:"cosc516")' \
                 ' |> range(start: 0, stop: now())' \
@@ -82,6 +99,9 @@ def query1():
     result = client.query_api().query(query=query)
     return result
 
+"""
+TO-DO : Query the data of field "high" (VIX-High) from Date 2006-12-26 to 2007-01-08, and sort by value in descending.
+"""
 def query2():
     query= 'from(bucket:"cosc516")' \
                 ' |> range(start: 2006-12-26, stop: 2007-01-08)' \
@@ -91,6 +111,9 @@ def query2():
     result = client.query_api().query(query=query) 
     return result
 
+"""
+TO-DO : Query the mean of "low" (VIX-Low) values per month starting from Date 2006-01-01 to 2006-12-31. Hint: use aggregateWindow()
+"""
 def query3():
     query= 'from(bucket:"cosc516")' \
                 ' |> range(start: 2006-01-01, stop: 2006-12-31)' \
@@ -100,6 +123,9 @@ def query3():
     result = client.query_api().query(query=query)
     return result
 
+"""
+TO-DO : Query the total count of each field.
+"""
 def query4():
     query='from(bucket:"cosc516")' \
                 ' |> range(start: 0, stop: now())' \

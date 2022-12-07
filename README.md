@@ -42,17 +42,17 @@ The file to edit is InfluxDB.py. The Test file is test.py. Marks for each method
 
 +1 mark - Method <kbd>drop()</kbd> to delete all data from the database.
 
-+4 mark - Method <kbd>load()</kbd> to load all data from the vix-daily.csv into the bucket.
++4 mark - Method <kbd>load()</kbd> to load all the data from the vix-daily.csv into the bucket with measurement name financial-analysis, tag="type" with value of "vix-daily" and fields = "open","high","low" and "close".
 
-+2 mark - Method <kbd>query0()</kbd> 
++3 mark - Method <kbd>query0()</kbd> to query the data of field "open" (VIX-Open), sort by value in ascending and limit by 5. 
 
-+3 mark - Method <kbd>query1()</kbd>
++3 mark - Method <kbd>query1()</kbd> to query the maximum value of each field "high", "open", "close" and "low" from the whole data
 
-+2 mark - Method <kbd>query2()</kbd>
++2 mark - Method <kbd>query2()</kbd> to query the data of field "high" (VIX-High) from Date 2006-12-26 to 2007-01-08, and sort by value in descending.
 
-+3 mark - Method <kbd>query3()</kbd>
++3 mark - Method <kbd>query3()</kbd> to query the mean of "low" (VIX-Low) values per month starting from Date 2006-01-01 to 2006-12-31. Hint: use aggregateWindow()
 
-+2 mark - Method <kbd>query4()</kbd>
++3 mark - Method <kbd>query4()</kbd> to query the total count of each field.
 
 Total Marks: 20
 
