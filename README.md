@@ -6,7 +6,7 @@ Create a free account in influxdb cloud from https://cloud2.influxdata.com/signu
 
 Choose the free tier.
 
-<img src="images/image1.png">
+<img src="Images/Image1.png">
 
 Choose a provider. We chose AWS for our project.
 
